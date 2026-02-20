@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('quantity', models.IntegerField()),
                 ('expiry', models.DateField(null=True)),
                 ('category', models.CharField(max_length=120)),
-                ('image_url', models.ImageField(null=True, upload_to='products')),
+                ('image', models.ImageField(null=True, upload_to='products')),
                 ('is_deleted', models.BooleanField(default=False)),
                 ('seller_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='products', to='users.sellers')),
             ],

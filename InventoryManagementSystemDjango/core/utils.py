@@ -2,8 +2,9 @@ import datetime
 
 import jwt
 from django.conf import settings
-from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.response import Response
+from users.models import Sellers
 
 
 def success_response(data=None, msg="", status_code=200):
@@ -24,13 +25,13 @@ def generate_jwt(user_id, expiry_minutes=30):
                "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=expiry_minutes)
                }
 
-    token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
+    token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
     return token
 
 
 def decode_jwt(token):
     try:
-        decoded = jwt.decode(token, settings.SECRET_KEY, algorithm="HS256")
+        decoded = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         return (decoded, None)
 
     except jwt.ExpiredSignatureError:
@@ -55,15 +56,14 @@ def get_user_from_request(request):
     if scheme.lower() != "bearer":
         return None, error_response(msg="Authorization header must start with Bearer",
                                     status_code=status.HTTP_401_UNAUTHORIZED)
-    decoded, error = decode_jwt(token)
 
+    decoded, error = decode_jwt(token)
     if error:
         return (None, error_response(msg=error,
                                      status_code=status.HTTP_401_UNAUTHORIZED))
 
     user_id = decoded.get("user_ID")
-    seller = Sellers.objects.filter(id=user_id,
-                                    is_deleted=False).first()
+    seller = Sellers.objects.filter(id=user_id, is_deleted=False).first()
 
     if not seller:
         return (None, error_response(msg="Invalid user",
