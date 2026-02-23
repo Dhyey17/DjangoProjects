@@ -6,7 +6,7 @@ from users.models import Sellers
 class Products(models.Model):
     seller = models.ForeignKey(Sellers, on_delete=models.CASCADE, related_name='products')
     name = models.CharField(max_length=120)
-    price = models.FloatField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.IntegerField()
     expiry = models.DateField(null=True)
     category = models.CharField(max_length=120)

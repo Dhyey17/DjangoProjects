@@ -6,6 +6,7 @@ from .models import Orders, OrderItems
 class OrderItemSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField(source="product.id", read_only=True)
     product_name = serializers.CharField(source="product.name", read_only=True)
+    price_at_time = serializers.IntegerField(source="product.price", read_only=True)
 
     class Meta:
         model = OrderItems
@@ -27,7 +28,7 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Orders
         fields = [
             "id",
-            "type",
+            "order_type",
             "total_price",
             "timestamp",
             "items"
