@@ -1,22 +1,53 @@
 # Inventory Management System — Django REST API
-A backend REST API built with **Django** and **Django REST Framework** for managing sellers, products, and orders. 
 
-## 🚀 Tech Stack
+A backend REST API built with **Django** and **Django REST Framework** for managing sellers, products, and orders.
+
+---
+
+## Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Setup & Installation](#setup--installation)
+- [API Endpoints](#-api-endpoints)
+- [Database Schema](#-data-models)
+- [Utilities](#-core-utilities-coreutilspy)
+
+---
+
+## Features
+
+- **Authentication** — Seller registration, login with JWT token generation
+- **Products** — Create, view, update, and soft-delete products with image upload support
+- **Orders** — Create multi-item orders of two types:
+    - **Incoming** — Increases product stock quantities (restock)
+    - **Outgoing** — Decreases product stock quantities with stock validation (sales)
+- **Seller Management** — View, update, and soft-delete seller accounts
+- **Image Uploads** — Product images uploaded via Django's file storage and served through the media URL
+
+---
+
+## Tech Stack
+
 - Language: Python
 - Framework: Django 6.0.2
 - API Layer: Django Rest Framework
 - Database: Sqlite3
 - File Storage: Django default(locally)
 
-## ⚙️ Setup & Installation
+---
+
+## Setup & Installation
 
 ### 1. Clone the repository
+
 ```terminaloutput
 git clone https://github.com/Dhyey17/DjangoProjects.git
 cd InventoryManagementSystemDjango
 ```
 
 ### 2. Create and activate a virtual environment
+
 ```terminaloutput
 python -m venv venv
 source venv/bin/activate        # Linux/macOS
@@ -24,6 +55,7 @@ venv\Scripts\activate           # Windows
 ```
 
 ### 3. Install dependencies
+
 ```terminaloutput
 pip install -r requirements.txt
 ```
@@ -31,11 +63,13 @@ pip install -r requirements.txt
 > **Note:** `Pillow` is required for `ImageField` support on the Products model.
 
 ### 4. Run migrations
+
 ```terminaloutput
 python manage.py migrate
 ```
 
 ### 5. Start the development server
+
 ```terminaloutput
 python manage.py runserver
 ```
@@ -46,9 +80,11 @@ The API will be live at `http://127.0.0.1:8000/`
 
 ## 🔐 Authentication
 
-This API uses **JWT (JSON Web Token)** based authentication. Tokens are generated at login and must be included in subsequent protected requests.
+This API uses **JWT (JSON Web Token)** based authentication. Tokens are generated at login and must be included in
+subsequent protected requests.
 
 **Header format:**
+
 ```
 Authorization: Bearer <your_token>
 ```
@@ -61,48 +97,48 @@ Tokens expire after **30 minutes** by default.
 
 ### 👤 Sellers (`/sellers/`)
 
-| Method | Endpoint              | Auth Required | Description              |
-|--------|-----------------------|---------------|--------------------------|
-| GET    | `/sellers/`           | ❌            | List all sellers          |
-| POST   | `/sellers/`           | ❌            | Register a new seller     |
-| GET    | `/sellers/<id>`       | ❌            | Get a seller's details    |
-| PATCH  | `/sellers/<id>`       | ✅ (own only) | Update seller info        |
-| DELETE | `/sellers/<id>`       | ✅ (own only) | Soft-delete a seller      |
-| POST   | `/sellers/login`      | ❌            | Login and get JWT token   |
-| GET    | `/sellers/<id>/products` | ❌         | Get products by seller    |
+| Method | Endpoint                 | Auth Required | Description             |
+|--------|--------------------------|---------------|-------------------------|
+| GET    | `/sellers/`              | ❌             | List all sellers        |
+| POST   | `/sellers/`              | ❌             | Register a new seller   |
+| GET    | `/sellers/<id>`          | ❌             | Get a seller's details  |
+| PATCH  | `/sellers/<id>`          | ✅ (own only)  | Update seller info      |
+| DELETE | `/sellers/<id>`          | ✅ (own only)  | Soft-delete a seller    |
+| POST   | `/sellers/login`         | ❌             | Login and get JWT token |
+| GET    | `/sellers/<id>/products` | ❌             | Get products by seller  |
 
 ---
 
 ### 📦 Products (`/products/`)
 
-| Method | Endpoint           | Auth Required | Description              |
-|--------|--------------------|---------------|--------------------------|
-| GET    | `/products/`       | ❌            | List all products         |
-| POST   | `/products/`       | ✅            | Create a new product      |
-| GET    | `/products/<id>/`  | ❌            | Get product details       |
-| PATCH  | `/products/<id>/`  | ✅            | Update a product          |
-| DELETE | `/products/<id>/`  | ✅            | Soft-delete a product     |
+| Method | Endpoint          | Auth Required | Description           |
+|--------|-------------------|---------------|-----------------------|
+| GET    | `/products/`      | ❌             | List all products     |
+| POST   | `/products/`      | ✅             | Create a new product  |
+| GET    | `/products/<id>/` | ❌             | Get product details   |
+| PATCH  | `/products/<id>/` | ✅             | Update a product      |
+| DELETE | `/products/<id>/` | ✅             | Soft-delete a product |
 
 **Create/Update Product — form-data fields:**
 
-| Field      | Type    | Required | Notes                         |
-|------------|---------|----------|-------------------------------|
-| `name`     | string  | ✅       |                               |
-| `price`    | float   | ✅       |                               |
-| `quantity` | integer | ✅       |                               |
-| `category` | string  | ✅       |                               |
-| `expiry`   | date    | ❌       | Format: `YYYY-MM-DD`          |
-| `image`    | file    | ❌       | Uploaded to `/media/products/` |
+| Field      | Type    | Required | Notes                          |
+|------------|---------|----------|--------------------------------|
+| `name`     | string  | ✅        |                                |
+| `price`    | float   | ✅        |                                |
+| `quantity` | integer | ✅        |                                |
+| `category` | string  | ✅        |                                |
+| `expiry`   | date    | ❌        | Format: `YYYY-MM-DD`           |
+| `image`    | file    | ❌        | Uploaded to `/media/products/` |
 
 ---
 
 ### 🛒 Orders (`/orders/`)
 
-| Method | Endpoint         | Auth Required | Description                |
-|--------|------------------|---------------|----------------------------|
-| POST   | `/orders/`       | ✅            | Create a new order          |
-| GET    | `/orders/`       | ✅            | List all orders for seller  |
-| GET    | `/orders/<id>/`  | ✅            | Get a specific order        |
+| Method | Endpoint        | Auth Required | Description                |
+|--------|-----------------|---------------|----------------------------|
+| POST   | `/orders/`      | ✅             | Create a new order         |
+| GET    | `/orders/`      | ✅             | List all orders for seller |
+| GET    | `/orders/<id>/` | ✅             | Get a specific order       |
 
 **Create Order — JSON body:**
 
@@ -128,45 +164,49 @@ Tokens expire after **30 minutes** by default.
 ## 🗃️ Data Models
 
 ### Sellers
-| Field        | Type        | Notes                        |
-|--------------|-------------|------------------------------|
-| `id`         | AutoField   | Primary key                  |
-| `name`       | CharField   |                              |
-| `username`   | CharField   | Unique                       |
-| `password`   | CharField   | Stored as Django hash        |
-| `is_deleted` | BooleanField| Soft delete flag             |
+
+| Field        | Type         | Notes                 |
+|--------------|--------------|-----------------------|
+| `id`         | AutoField    | Primary key           |
+| `name`       | CharField    |                       |
+| `username`   | CharField    | Unique                |
+| `password`   | CharField    | Stored as Django hash |
+| `is_deleted` | BooleanField | Soft delete flag      |
 
 ### Products
-| Field        | Type         | Notes                                |
-|--------------|--------------|--------------------------------------|
-| `id`         | BigAutoField | Primary key                          |
-| `seller`     | ForeignKey   | References `Sellers`                 |
-| `name`       | CharField    |                                      |
-| `price`      | FloatField   |                                      |
-| `quantity`   | IntegerField |                                      |
-| `expiry`     | DateField    | Nullable                             |
-| `category`   | CharField    |                                      |
-| `image`      | ImageField   | Nullable, uploaded to `products/`    |
-| `is_deleted` | BooleanField | Soft delete flag                     |
+
+| Field        | Type         | Notes                             |
+|--------------|--------------|-----------------------------------|
+| `id`         | BigAutoField | Primary key                       |
+| `seller`     | ForeignKey   | References `Sellers`              |
+| `name`       | CharField    |                                   |
+| `price`      | FloatField   |                                   |
+| `quantity`   | IntegerField |                                   |
+| `expiry`     | DateField    | Nullable                          |
+| `category`   | CharField    |                                   |
+| `image`      | ImageField   | Nullable, uploaded to `products/` |
+| `is_deleted` | BooleanField | Soft delete flag                  |
 
 ### Orders
-| Field        | Type         | Notes                          |
-|--------------|--------------|--------------------------------|
-| `id`         | BigAutoField | Primary key                    |
-| `seller`     | ForeignKey   | References `Sellers`           |
-| `type`       | CharField    | `INCOMING` or `OUTGOING`       |
-| `total_price`| FloatField   | Auto-calculated                |
-| `timestamp`  | DateTimeField| Auto-set on creation           |
+
+| Field         | Type          | Notes                    |
+|---------------|---------------|--------------------------|
+| `id`          | BigAutoField  | Primary key              |
+| `seller`      | ForeignKey    | References `Sellers`     |
+| `type`        | CharField     | `INCOMING` or `OUTGOING` |
+| `total_price` | FloatField    | Auto-calculated          |
+| `timestamp`   | DateTimeField | Auto-set on creation     |
 
 ### OrderItems
-| Field           | Type         | Notes                          |
-|-----------------|--------------|--------------------------------|
-| `id`            | BigAutoField | Primary key                    |
-| `order`         | ForeignKey   | References `Orders`            |
-| `product`       | ForeignKey   | References `Products`          |
-| `quantity`      | IntegerField |                                |
-| `price_at_time` | FloatField   | Snapshot of price at order time|
-| `total`         | FloatField   | Auto-calculated on save        |
+
+| Field           | Type         | Notes                           |
+|-----------------|--------------|---------------------------------|
+| `id`            | BigAutoField | Primary key                     |
+| `order`         | ForeignKey   | References `Orders`             |
+| `product`       | ForeignKey   | References `Products`           |
+| `quantity`      | IntegerField |                                 |
+| `price_at_time` | FloatField   | Snapshot of price at order time |
+| `total`         | FloatField   | Auto-calculated on save         |
 
 ---
 
@@ -188,15 +228,17 @@ A shared utilities module used across all apps:
 **Standard Response Format:**
 
 Success:
+
 ```json
 {
   "success": true,
   "msg": "...",
-  "data": { }
+  "data": {}
 }
 ```
 
 Error:
+
 ```json
 {
   "success": false,
